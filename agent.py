@@ -1,33 +1,41 @@
 import asyncio
 from mcp_use import MCPClient
 
-async def main():
+async def run_blender_code_async(code: str):
     try:
-        # Explicitly load config file
-        config_path = "/home/gyan-max/Desktop/mcp-use-main/blender_mcp.json"
+        config_path = "C:/Users/ASUS/OneDrive/Desktop/MCP-Server-blender/blender_mcp.json"
+        print("Connecting to MCP server...")
         client = MCPClient.from_config_file(config_path)
-        print("Client initialized successfully")
-        
-        # Create session for 'blender'
+        print("Connected. Creating session...")
         session = await client.create_session("blender")
-        print("Session created:", session)
-
-        # Discover available tools
-        tools = await session.discover_tools()
-        print("Discovered tools:", [tool.name for tool in tools])
-        
-        # Send command to add a cube using the 'execute_code' tool
-        code = "import bpy; bpy.ops.mesh.primitive_cube_add(size=2, location=(0, 0, 0))"
-        # Add a circle at the origin
-        # code = "import bpy; bpy.ops.mesh.primitive_circle_add(vertices=32, radius=1.0, fill_type='NGON', location=(0, 0, 10))"
+        print("Session created. Sending code...")
         response = await session.call_tool("execute_blender_code", {"code": code})
-        print("Response from server:", response)
-        # primitive_cube_add = response.get("primitive_cube_add")
-        # print("Primitive cube add:", primitive_cube_add)
-        # Clean up
+        print("Code sent. Response:", response)
         await client.close_session("blender")
+        print("Session closed.")
+        return response
     except Exception as e:
-        print("Error:", e)
+        return {"error": str(e)}
+
+# Synchronous wrapper for Flask
+
+def run_blender_code(code: str):
+    return asyncio.run(run_blender_code_async(code))
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    # Example usage: create a cube
+    code = "import bpy; bpy.ops.mesh.primitive_cube_add(size=2, location=(0, 0, 0))"
+    print(run_blender_code(code))
+
+    # Example usage: create a UV sphere
+    code = "import bpy; bpy.ops.mesh.primitive_uv_sphere_add(radius=1, location=(2, 2, 0))"
+    print(run_blender_code(code))
+
+    # Example usage: create a cone
+    code = "import bpy; bpy.ops.mesh.primitive_cone_add(radius1=1, depth=2, location=(-2, 0, 0))"
+    print(run_blender_code(code))
+
+    # Example usage: create a cone
+    code = "import bpy; bpy.ops.mesh.primitive_cone_add(radius1=1, depth=2, location=(-2, 0, 0))"
+    print("Claude output:", code)
+    print(run_blender_code(code))
