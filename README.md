@@ -635,3 +635,143 @@ If you use MCP-Use in your research or project, please cite:
 # License
 
 MIT
+
+# Blender Text-to-3D Generator
+
+A Streamlit application that allows you to generate 3D content in Blender using natural language prompts. This application connects to Blender through the Machine Control Protocol (MCP) client, allowing seamless interaction between the web UI and the 3D modeling software.
+
+## Features
+
+- Generate 3D models from text descriptions
+- Modify existing 3D models using natural language commands
+- Intuitive Streamlit web interface
+- Integration with Blender through MCP
+- Advanced natural language processing for 3D operations
+
+## System Components
+
+The system consists of the following components:
+
+- **main.py**: The Streamlit application providing the web interface
+- **advanced_prompt_handler.py**: Module for natural language processing and Blender code generation
+- **agent.py**: Core communication with the Blender MCP server
+- **addon.py**: Blender addon that provides MCP server functionality
+- **mcp_use**: Library for Machine Control Protocol communication
+- **blender-mcp**: MCP server implementation for Blender
+
+## Prerequisites
+
+1. Python 3.8+ installed on your system
+2. Blender 3.0+ installed on your system 
+3. Blender MCP addon installed and enabled in Blender
+
+## Installation
+
+1. Clone this repository:
+   ```
+   git clone <repository-url>
+   cd blender-text-to-3d
+   ```
+
+2. Install the required dependencies:
+   ```
+   pip install -r requirements.txt
+   ```
+
+3. Make sure the Blender MCP addon is installed and enabled in Blender:
+   - Open Blender
+   - Go to Edit > Preferences > Add-ons
+   - Find and enable the "Blender MCP" addon
+   - If not installed, follow the installation instructions from the addon's repository
+
+## Running the Application
+
+1. Start Blender and enable the MCP server:
+   - Open Blender
+   - In the 3D Viewport, open the sidebar (N key)
+   - Go to the "BlenderMCP" tab
+   - Click "Connect to Claude"
+
+2. Run the Streamlit application:
+   ```
+   python run.py
+   ```
+   
+   Or directly with Streamlit:
+   ```
+   streamlit run main.py
+   ```
+
+3. Access the application in your web browser at http://localhost:8501
+
+## Usage
+
+### Creating New 3D Objects
+
+Enter prompts like:
+- "Create a chair"
+- "Generate a red table"
+- "Make a tree"
+- "Build a small house"
+
+### Modifying Existing Objects
+
+First, select the object(s) in Blender, then use prompts like:
+- "Make it red"
+- "Scale it larger"
+- "Rotate the object"
+- "Move it up"
+- "Delete the selected objects"
+
+## How It Works
+
+1. The user enters a text prompt in the Streamlit interface
+2. The prompt is parsed by the `PromptHandler` class to identify:
+   - The desired action (create, modify, color, etc.)
+   - The object type (chair, table, tree, etc.)
+   - Properties (color, size, style, etc.)
+3. The handler generates appropriate Blender Python code
+4. The code is sent to Blender via the MCP client
+5. Blender executes the code and creates/modifies the 3D objects
+6. The result is visible in the Blender viewport
+
+## Architecture
+
+```
+┌─────────────┐    ┌──────────────┐    ┌──────────────┐
+│  Streamlit  │    │   MCP-Use    │    │    Blender   │
+│  Interface  │◄──►│  MCP Client  │◄──►│  MCP Server  │
+└─────────────┘    └──────────────┘    └──────────────┘
+       │                                      │
+       │                                      │
+┌─────────────┐                       ┌──────────────┐
+│   Prompt    │                       │   Blender    │
+│  Processing │                       │   Python     │
+└─────────────┘                       └──────────────┘
+```
+
+## Extending the Application
+
+You can extend this application by:
+
+1. Adding more object types and templates to `advanced_prompt_handler.py`
+2. Implementing more advanced natural language processing
+3. Adding material and texture controls
+4. Implementing animation capabilities
+5. Connecting to 3D model repositories or generators
+
+## Troubleshooting
+
+- If the connection fails, make sure the Blender MCP server is running
+- Check that the port in `blender_mcp.json` matches the port used by the Blender MCP addon
+- Examine the logs in both the Streamlit console and Blender's console
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## Acknowledgments
+
+- The Blender Foundation for the amazing Blender software
+- Anthropic and the Claude team for enabling natural language 3D creation
+- The MCP (Machine Control Protocol) project for enabling LLM-to-tool communication
