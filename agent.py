@@ -3,7 +3,7 @@ from mcp_use import MCPClient
 
 async def run_blender_code_async(code: str):
     try:
-        config_path = "C:/Users/ASUS/OneDrive/Desktop/MCP-Server-blender/blender_mcp.json"
+        config_path = "/home/gyan-max/Desktop/mcp-use-main/blender_mcp.json"
         print("Connecting to MCP server...")
         client = MCPClient.from_config_file(config_path)
         print("Connected. Creating session...")

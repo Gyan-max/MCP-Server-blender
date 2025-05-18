@@ -1,777 +1,148 @@
-<picture>
-  <img alt="" src="./static/image.jpg"  width="full">
-</picture>
+![img](.github/img.png)
 
-<h1 align="center">Unified MCP Client Library </h1>
+# Prompt-to-3D
 
-[![](https://img.shields.io/pypi/dw/mcp_use.svg)](https://pypi.org/project/mcp_use/)
-[![PyPI Downloads](https://img.shields.io/pypi/dm/mcp_use.svg)](https://pypi.org/project/mcp_use/)
-[![PyPI Version](https://img.shields.io/pypi/v/mcp_use.svg)](https://pypi.org/project/mcp_use/)
-[![Python Versions](https://img.shields.io/pypi/pyversions/mcp_use.svg)](https://pypi.org/project/mcp_use/)
-[![Documentation](https://img.shields.io/badge/docs-mcp--use.io-blue)](https://docs.mcp-use.io)
-[![Website](https://img.shields.io/badge/website-mcp--use.io-blue)](https://mcp-use.io)
-[![License](https://img.shields.io/github/license/pietrozullo/mcp-use)](https://github.com/pietrozullo/mcp-use/blob/main/LICENSE)
-[![Code style: Ruff](https://img.shields.io/badge/code%20style-ruff-000000.svg)](https://github.com/astral-sh/ruff)
-[![GitHub stars](https://img.shields.io/github/stars/pietrozullo/mcp-use?style=social)](https://github.com/pietrozullo/mcp-use/stargazers)
-[![Twitter Follow](https://img.shields.io/twitter/follow/Pietro?style=social)](https://x.com/pietrozullo)
+### Overview
 
-🌐 MCP-Use is the open source way to connect **any LLM to any MCP server** and build custom agents that have tool access, without using closed source or application clients.
+Prompt-to-3D is an innovative tool designed to make 3D modeling in Blender accessible to everyone, especially beginners and non-technical users. By allowing users to create 3D models using simple text prompts (e.g., "create a red car" or something else), our project eliminates the need to navigate Blender's complex interface. Powered by natural language processing(NLP) and Blender's python API, **Prompt-to-3D** translates plain language into 3D models, empowering anyone to create 3D models with ease.
 
-💡 Let developers easily connect any LLM to tools like web browsing, file operations, and more.
+### Problem Statements
 
-# Features
+Blender is a powerful 3D modeling tool, but its steep learning curve and intricate interface can be overwhelming for beginners. Many people with great ideas struggle to create 3D models dur to the technical skills required. Prompt-to-3D solves this by enabling users to describe their vision in simple words, making 3D creation intuitive and inclusive.
 
-## ✨ Key Features
+### Features
+- **Natural Language Input:** Create 3D models by typing 
+simple prompts like "Create a cube or a circle or anything" 
+- **Blender Integration:** Seamlessly works within Blender using its Python API
+- **Beginner-Friendly:** No need to learn Blender's tools or workflows.
+- **Extensible:** Support future enhancements like advance NLP models or web-based interfaces.
 
-| Feature | Description |
-|---------|-------------|
-| 🔄 [**Ease of use**](#quick-start) | Create your first MCP capable agent you need only 6 lines of code |
-| 🤖 [**LLM Flexibility**](#installing-langchain-providers) | Works with any langchain supported LLM that supports tool calling (OpenAI, Anthropic, Groq, LLama etc.) |
-| 🌐 [**Code Builder**](https://mcp-use.io/builder) | Explore MCP capabilities and generate starter code with the interactive [code builder](https://mcp-use.io/builder). |
-| 🔗 [**HTTP Support**](#http-connection-example) | Direct connection to MCP servers running on specific HTTP ports |
-| ⚙️ [**Dynamic Server Selection**](#dynamic-server-selection-server-manager) | Agents can dynamically choose the most appropriate MCP server for a given task from the available pool |
-| 🧩 [**Multi-Server Support**](#multi-server-support) | Use multiple MCP servers simultaneously in a single agent |
-| 🛡️ [**Tool Restrictions**](#tool-access-control) | Restrict potentially dangerous tools like file system or network access |
-| 🔧 [**Custom Agents**](#build-a-custom-agent) | Build your own agents with any framework using the LangChain adapter or create new adapters |
+### Tech Stack
 
+- **Blender Python API(byp)**: Automates 3D modeling tasks in Blender.
+- **Python**: Core language for scripting and integration
+- **NLP/LLM**: Using Ollama and Mistral model for natural language processing
+- **Flask**: Lightweight backend for promppt processing
+- **HTML/CSS/JavaScript**: For potential web-based interface.
 
-# Quick start
+### Installation
+**Prerequisites**
+- Blender 3.0 or higher
+- Python 3.10 or higher
+- pip and venv for installing python packages and requirements.
 
-With pip:
+### Steps
+## 1. Clone the repository
 
 ```bash
-pip install mcp-use
+git clone https://github.com/yourusername/Prompt-to-3D.git
+cd Prompt-to-3D
 ```
+## 2. Set up Virtual Environment
+ - for windows
+ ```bash
+ python -m venv venv
+ venv/Script/activate
+ ```
+ - for macOS/Linux
+ ```bash
+ python3 -m venv venv
+ source venv/bin/activate
+  # if using fish shell
+  source venv/bin/activate.fish
 
-Or install from source:
+  - verify
+  ```bash
+  which python
+  which pip
+  ```
+  Except paths like `/path/to/venv/bin/python` and `/path/to/venv/bin/pip`
+
+## 3. Install `uv`(Dependency Manager)
 
 ```bash
-git clone https://github.com/pietrozullo/mcp-use.git
-cd mcp-use
-pip install -e .
+pip install uv
+uv --version
 ```
 
-### Installing LangChain Providers
-
-mcp_use works with various LLM providers through LangChain. You'll need to install the appropriate LangChain provider package for your chosen LLM. For example:
+## 4. Install `mcp-use`
 
 ```bash
-# For OpenAI
-pip install langchain-openai
-
-# For Anthropic
-pip install langchain-anthropic
-
-# For other providers, check the [LangChain chat models documentation](https://python.langchain.com/docs/integrations/chat/)
+uv pip install mcp-use
 ```
-
-and add your API keys for the provider you want to use to your `.env` file.
+- verify
 
 ```bash
-OPENAI_API_KEY=
-ANTHROPIC_API_KEY=
+pip show mcp-use
 ```
 
-> **Important**: Only models with tool calling capabilities can be used with mcp_use. Make sure your chosen model supports function calling or tool use.
+## 5. Config LLM Provider
 
-### Spin up your agent:
-
-```python
-import asyncio
-import os
-from dotenv import load_dotenv
-from langchain_openai import ChatOpenAI
-from mcp_use import MCPAgent, MCPClient
-
-async def main():
-    # Load environment variables
-    load_dotenv()
-
-    # Create configuration dictionary
-    config = {
-      "mcpServers": {
-        "playwright": {
-          "command": "npx",
-          "args": ["@playwright/mcp@latest"],
-          "env": {
-            "DISPLAY": ":1"
-          }
-        }
-      }
-    }
-
-    # Create MCPClient from configuration dictionary
-    client = MCPClient.from_dict(config)
-
-    # Create LLM
-    llm = ChatOpenAI(model="gpt-4o")
-
-    # Create agent with the client
-    agent = MCPAgent(llm=llm, client=client, max_steps=30)
-
-    # Run the query
-    result = await agent.run(
-        "Find the best restaurant in San Francisco",
-    )
-    print(f"\nResult: {result}")
-
-if __name__ == "__main__":
-    asyncio.run(main())
-```
-
-You can also add the servers configuration from a config file like this:
-
-```python
-client = MCPClient.from_config_file(
-        os.path.join("browser_mcp.json")
-    )
-```
-
-Example configuration file (`browser_mcp.json`):
-
-```json
-{
-  "mcpServers": {
-    "playwright": {
-      "command": "npx",
-      "args": ["@playwright/mcp@latest"],
-      "env": {
-        "DISPLAY": ":1"
-      }
-    }
-  }
-}
-```
-
-For other settings, models, and more, check out the documentation.
-
-## Streaming Agent Output
-
-MCP-Use supports asynchronous streaming of agent output using the `astream` method on `MCPAgent`. This allows you to receive incremental results, tool actions, and intermediate steps as they are generated by the agent, enabling real-time feedback and progress reporting.
-
-### How to use
-
-Call `agent.astream(query)` and iterate over the results asynchronously:
-
-```python
-async for chunk in agent.astream("Find the best restaurant in San Francisco"):
-    print(chunk["messages"], end="", flush=True)
-```
-
-Each chunk is a dictionary containing keys such as `actions`, `steps`, `messages`, and (on the last chunk) `output`. This enables you to build responsive UIs or log agent progress in real time.
-
-#### Example: Streaming in Practice
-
-```python
-import asyncio
-import os
-from dotenv import load_dotenv
-from langchain_openai import ChatOpenAI
-from mcp_use import MCPAgent, MCPClient
-
-async def main():
-    load_dotenv()
-    client = MCPClient.from_config_file("browser_mcp.json")
-    llm = ChatOpenAI(model="gpt-4o")
-    agent = MCPAgent(llm=llm, client=client, max_steps=30)
-    async for chunk in agent.astream("Look for job at nvidia for machine learning engineer."):
-        print(chunk["messages"], end="", flush=True)
-
-if __name__ == "__main__":
-    asyncio.run(main())
-```
-
-This streaming interface is ideal for applications that require real-time updates, such as chatbots, dashboards, or interactive notebooks.
-
-# Example Use Cases
-
-## Web Browsing with Playwright
-
-```python
-import asyncio
-import os
-from dotenv import load_dotenv
-from langchain_openai import ChatOpenAI
-from mcp_use import MCPAgent, MCPClient
-
-async def main():
-    # Load environment variables
-    load_dotenv()
-
-    # Create MCPClient from config file
-    client = MCPClient.from_config_file(
-        os.path.join(os.path.dirname(__file__), "browser_mcp.json")
-    )
-
-    # Create LLM
-    llm = ChatOpenAI(model="gpt-4o")
-    # Alternative models:
-    # llm = ChatAnthropic(model="claude-3-5-sonnet-20240620")
-    # llm = ChatGroq(model="llama3-8b-8192")
-
-    # Create agent with the client
-    agent = MCPAgent(llm=llm, client=client, max_steps=30)
-
-    # Run the query
-    result = await agent.run(
-        "Find the best restaurant in San Francisco USING GOOGLE SEARCH",
-        max_steps=30,
-    )
-    print(f"\nResult: {result}")
-
-if __name__ == "__main__":
-    asyncio.run(main())
-```
-
-## Airbnb Search
-
-```python
-import asyncio
-import os
-from dotenv import load_dotenv
-from langchain_anthropic import ChatAnthropic
-from mcp_use import MCPAgent, MCPClient
-
-async def run_airbnb_example():
-    # Load environment variables
-    load_dotenv()
-
-    # Create MCPClient with Airbnb configuration
-    client = MCPClient.from_config_file(
-        os.path.join(os.path.dirname(__file__), "airbnb_mcp.json")
-    )
-
-    # Create LLM - you can choose between different models
-    llm = ChatAnthropic(model="claude-3-5-sonnet-20240620")
-
-    # Create agent with the client
-    agent = MCPAgent(llm=llm, client=client, max_steps=30)
-
-    try:
-        # Run a query to search for accommodations
-        result = await agent.run(
-            "Find me a nice place to stay in Barcelona for 2 adults "
-            "for a week in August. I prefer places with a pool and "
-            "good reviews. Show me the top 3 options.",
-            max_steps=30,
-        )
-        print(f"\nResult: {result}")
-    finally:
-        # Ensure we clean up resources properly
-        if client.sessions:
-            await client.close_all_sessions()
-
-if __name__ == "__main__":
-    asyncio.run(run_airbnb_example())
-```
-
-Example configuration file (`airbnb_mcp.json`):
-
-```json
-{
-  "mcpServers": {
-    "airbnb": {
-      "command": "npx",
-      "args": ["-y", "@openbnb/mcp-server-airbnb"]
-    }
-  }
-}
-```
-
-## Blender 3D Creation
-
-```python
-import asyncio
-from dotenv import load_dotenv
-from langchain_anthropic import ChatAnthropic
-from mcp_use import MCPAgent, MCPClient
-
-async def run_blender_example():
-    # Load environment variables
-    load_dotenv()
-
-    # Create MCPClient with Blender MCP configuration
-    config = {"mcpServers": {"blender": {"command": "uvx", "args": ["blender-mcp"]}}}
-    client = MCPClient.from_dict(config)
-
-    # Create LLM
-    llm = ChatAnthropic(model="claude-3-5-sonnet-20240620")
-
-    # Create agent with the client
-    agent = MCPAgent(llm=llm, client=client, max_steps=30)
-
-    try:
-        # Run the query
-        result = await agent.run(
-            "Create an inflatable cube with soft material and a plane as ground.",
-            max_steps=30,
-        )
-        print(f"\nResult: {result}")
-    finally:
-        # Ensure we clean up resources properly
-        if client.sessions:
-            await client.close_all_sessions()
-
-if __name__ == "__main__":
-    asyncio.run(run_blender_example())
-```
-
-# Configuration File Support
-
-MCP-Use supports initialization from configuration files, making it easy to manage and switch between different MCP server setups:
-
-```python
-import asyncio
-from mcp_use import create_session_from_config
-
-async def main():
-    # Create an MCP session from a config file
-    session = create_session_from_config("mcp-config.json")
-
-    # Initialize the session
-    await session.initialize()
-
-    # Use the session...
-
-    # Disconnect when done
-    await session.disconnect()
-
-if __name__ == "__main__":
-    asyncio.run(main())
-```
-
-## HTTP Connection Example
-
-MCP-Use supports HTTP connections, allowing you to connect to MCP servers running on specific HTTP ports. This feature is particularly useful for integrating with web-based MCP servers.
-
-Here's an example of how to use the HTTP connection feature:
-
-```python
-import asyncio
-import os
-from dotenv import load_dotenv
-from langchain_openai import ChatOpenAI
-from mcp_use import MCPAgent, MCPClient
-
-async def main():
-    """Run the example using a configuration file."""
-    # Load environment variables
-    load_dotenv()
-
-    config = {
-        "mcpServers": {
-            "http": {
-                "url": "http://localhost:8931/sse"
-            }
-        }
-    }
-
-    # Create MCPClient from config file
-    client = MCPClient.from_dict(config)
-
-    # Create LLM
-    llm = ChatOpenAI(model="gpt-4o")
-
-    # Create agent with the client
-    agent = MCPAgent(llm=llm, client=client, max_steps=30)
-
-    # Run the query
-    result = await agent.run(
-        "Find the best restaurant in San Francisco USING GOOGLE SEARCH",
-        max_steps=30,
-    )
-    print(f"\nResult: {result}")
-
-if __name__ == "__main__":
-    # Run the appropriate example
-    asyncio.run(main())
-```
-
-This example demonstrates how to connect to an MCP server running on a specific HTTP port. Make sure to start your MCP server before running this example.
-
-# Multi-Server Support
-
-MCP-Use allows configuring and connecting to multiple MCP servers simultaneously using the `MCPClient`. This enables complex workflows that require tools from different servers, such as web browsing combined with file operations or 3D modeling.
-
-## Configuration
-
-You can configure multiple servers in your configuration file:
-
-```json
-{
-  "mcpServers": {
-    "airbnb": {
-      "command": "npx",
-      "args": ["-y", "@openbnb/mcp-server-airbnb", "--ignore-robots-txt"]
-    },
-    "playwright": {
-      "command": "npx",
-      "args": ["@playwright/mcp@latest"],
-      "env": {
-        "DISPLAY": ":1"
-      }
-    }
-  }
-}
-```
-
-## Usage
-
-The `MCPClient` class provides methods for managing connections to multiple servers. When creating an `MCPAgent`, you can provide an `MCPClient` configured with multiple servers.
-
-By default, the agent will have access to tools from all configured servers. If you need to target a specific server for a particular task, you can specify the `server_name` when calling the `agent.run()` method.
-
-```python
-# Example: Manually selecting a server for a specific task
-result = await agent.run(
-    "Search for Airbnb listings in Barcelona",
-    server_name="airbnb" # Explicitly use the airbnb server
-)
-
-result_google = await agent.run(
-    "Find restaurants near the first result using Google Search",
-    server_name="playwright" # Explicitly use the playwright server
-)
-```
-
-## Dynamic Server Selection (Server Manager)
-
-For enhanced efficiency and to reduce potential agent confusion when dealing with many tools from different servers, you can enable the Server Manager by setting `use_server_manager=True` during `MCPAgent` initialization.
-
-When enabled, the agent intelligently selects the correct MCP server based on the tool chosen by the LLM for a specific step. This minimizes unnecessary connections and ensures the agent uses the appropriate tools for the task.
-
-```python
-import asyncio
-from mcp_use import MCPClient, MCPAgent
-from langchain_anthropic import ChatAnthropic
-
-async def main():
-    # Create client with multiple servers
-    client = MCPClient.from_config_file("multi_server_config.json")
-
-    # Create agent with the client
-    agent = MCPAgent(
-        llm=ChatAnthropic(model="claude-3-5-sonnet-20240620"),
-        client=client,
-        use_server_manager=True  # Enable the Server Manager
-    )
-
-    try:
-        # Run a query that uses tools from multiple servers
-        result = await agent.run(
-            "Search for a nice place to stay in Barcelona on Airbnb, "
-            "then use Google to find nearby restaurants and attractions."
-        )
-        print(result)
-    finally:
-        # Clean up all sessions
-        await client.close_all_sessions()
-
-if __name__ == "__main__":
-    asyncio.run(main())
-```
-
-# Tool Access Control
-
-MCP-Use allows you to restrict which tools are available to the agent, providing better security and control over agent capabilities:
-
-```python
-import asyncio
-from mcp_use import MCPAgent, MCPClient
-from langchain_openai import ChatOpenAI
-
-async def main():
-    # Create client
-    client = MCPClient.from_config_file("config.json")
-
-    # Create agent with restricted tools
-    agent = MCPAgent(
-        llm=ChatOpenAI(model="gpt-4"),
-        client=client,
-        disallowed_tools=["file_system", "network"]  # Restrict potentially dangerous tools
-    )
-
-    # Run a query with restricted tool access
-    result = await agent.run(
-        "Find the best restaurant in San Francisco"
-    )
-    print(result)
-
-    # Clean up
-    await client.close_all_sessions()
-
-if __name__ == "__main__":
-    asyncio.run(main())
-```
-
-# Build a Custom Agent:
-
-You can also build your own custom agent using the LangChain adapter:
-
-```python
-import asyncio
-from langchain_openai import ChatOpenAI
-from mcp_use.client import MCPClient
-from mcp_use.adapters.langchain_adapter import LangChainAdapter
-from dotenv import load_dotenv
-
-load_dotenv()
-
-
-async def main():
-    # Initialize MCP client
-    client = MCPClient.from_config_file("examples/browser_mcp.json")
-    llm = ChatOpenAI(model="gpt-4o")
-
-    # Create adapter instance
-    adapter = LangChainAdapter()
-    # Get LangChain tools with a single line
-    tools = await adapter.create_tools(client)
-
-    # Create a custom LangChain agent
-    llm_with_tools = llm.bind_tools(tools)
-    result = await llm_with_tools.ainvoke("What tools do you have avilable ? ")
-    print(result)
-
-
-if __name__ == "__main__":
-    asyncio.run(main())
-
-
-```
-
-# Debugging
-
-MCP-Use provides a built-in debug mode that increases log verbosity and helps diagnose issues in your agent implementation.
-
-## Enabling Debug Mode
-
-There are two primary ways to enable debug mode:
-
-### 1. Environment Variable (Recommended for One-off Runs)
-
-Run your script with the `DEBUG` environment variable set to the desired level:
+- Create `.env` file for Anthropic or any other provider
 
 ```bash
-# Level 1: Show INFO level messages
-DEBUG=1 python3.11 examples/browser_use.py
-
-# Level 2: Show DEBUG level messages (full verbose output)
-DEBUG=2 python3.11 examples/browser_use.py
+touch .env
+nano .env
 ```
-
-This sets the debug level only for the duration of that specific Python process.
-
-Alternatively you can set the following environment variable to the desired logging level:
+- Add provider details
 
 ```bash
-export MCP_USE_DEBUG=1 # or 2
+ANTHROPIC_API_KEY=your_api_key
+```
+save `ctrl+x` and `y`
+
+- verify
+
+```bash
+ls -la .env
 ```
 
-### 2. Setting the Debug Flag Programmatically
+- Install langfow for local development
 
-You can set the global debug flag directly in your code:
-
-```python
-import mcp_use
-
-mcp_use.set_debug(1)  # INFO level
-# or
-mcp_use.set_debug(2)  # DEBUG level (full verbose output)
+```bash
+pip install langflow anthropic
 ```
 
-### 3. Agent-Specific Verbosity
+- Test Anthropic API
 
-If you only want to see debug information from the agent without enabling full debug logging, you can set the `verbose` parameter when creating an MCPAgent:
-
-```python
-# Create agent with increased verbosity
-agent = MCPAgent(
-    llm=your_llm,
-    client=your_client,
-    verbose=True  # Only shows debug messages from the agent
-)
+```bash
+python3 -c "import anthropic: anthropic.Client('your_api_key').complete(prompt='Hello, world!')"
 ```
 
-This is useful when you only need to see the agent's steps and decision-making process without all the low-level debug information from other components.
+## 6. Confirm Blender Installation
 
+- Check if Blender is installed and available in the PATH
 
-# Roadmap
-
-<ul>
-<li>[x] Multiple Servers at once </li>
-<li>[x] Test remote connectors (http, ws)</li>
-<li>[ ] ... </li>
-</ul>
-
-## Star History
-
-[![Star History Chart](https://api.star-history.com/svg?repos=pietrozullo/mcp-use&type=Date)](https://www.star-history.com/#pietrozullo/mcp-use&Date)
-
-# Contributing
-
-We love contributions! Feel free to open issues for bugs or feature requests. Look at [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
-
-# Requirements
-
-- Python 3.11+
-- MCP implementation (like Playwright MCP)
-- LangChain and appropriate model libraries (OpenAI, Anthropic, etc.)
-
-# Citation
-
-If you use MCP-Use in your research or project, please cite:
-
-```bibtex
-@software{mcp_use2025,
-  author = {Zullo, Pietro},
-  title = {MCP-Use: MCP Library for Python},
-  year = {2025},
-  publisher = {GitHub},
-  url = {https://github.com/pietrozullo/mcp-use}
-}
+```bash
+blender --version
 ```
+Expect output like `Blender 3.5.1` or higher.
 
-# License
+- If not installed, download from [Blender Official Website](https://www.blender.org/download/)
+- Verify the installation by running `blender --version`
 
-MIT
+- for linux/macOS
 
-# Blender Text-to-3D Generator
+```bash
+# for macOS
+brew install blender
 
-A Streamlit application that allows you to generate 3D content in Blender using natural language prompts. This application connects to Blender through the Machine Control Protocol (MCP) client, allowing seamless interaction between the web UI and the 3D modeling software.
-
-## Features
-
-- Generate 3D models from text descriptions
-- Modify existing 3D models using natural language commands
-- Intuitive Streamlit web interface
-- Integration with Blender through MCP
-- Advanced natural language processing for 3D operations
-
-## System Components
-
-The system consists of the following components:
-
-- **main.py**: The Streamlit application providing the web interface
-- **advanced_prompt_handler.py**: Module for natural language processing and Blender code generation
-- **agent.py**: Core communication with the Blender MCP server
-- **addon.py**: Blender addon that provides MCP server functionality
-- **mcp_use**: Library for Machine Control Protocol communication
-- **blender-mcp**: MCP server implementation for Blender
-
-## Prerequisites
-
-1. Python 3.8+ installed on your system
-2. Blender 3.0+ installed on your system 
-3. Blender MCP addon installed and enabled in Blender
-
-## Installation
-
-1. Clone this repository:
-   ```
-   git clone <repository-url>
-   cd blender-text-to-3d
-   ```
-
-2. Install the required dependencies:
-   ```
-   pip install -r requirements.txt
-   ```
-
-3. Make sure the Blender MCP addon is installed and enabled in Blender:
-   - Open Blender
-   - Go to Edit > Preferences > Add-ons
-   - Find and enable the "Blender MCP" addon
-   - If not installed, follow the installation instructions from the addon's repository
-
-## Running the Application
-
-1. Start Blender and enable the MCP server:
-   - Open Blender
-   - In the 3D Viewport, open the sidebar (N key)
-   - Go to the "BlenderMCP" tab
-   - Click "Connect to Claude"
-
-2. Run the Streamlit application:
-   ```
-   python run.py
-   ```
-   
-   Or directly with Streamlit:
-   ```
-   streamlit run main.py
-   ```
-
-3. Access the application in your web browser at http://localhost:8501
-
-## Usage
-
-### Creating New 3D Objects
-
-Enter prompts like:
-- "Create a chair"
-- "Generate a red table"
-- "Make a tree"
-- "Build a small house"
-
-### Modifying Existing Objects
-
-First, select the object(s) in Blender, then use prompts like:
-- "Make it red"
-- "Scale it larger"
-- "Rotate the object"
-- "Move it up"
-- "Delete the selected objects"
-
-## How It Works
-
-1. The user enters a text prompt in the Streamlit interface
-2. The prompt is parsed by the `PromptHandler` class to identify:
-   - The desired action (create, modify, color, etc.)
-   - The object type (chair, table, tree, etc.)
-   - Properties (color, size, style, etc.)
-3. The handler generates appropriate Blender Python code
-4. The code is sent to Blender via the MCP client
-5. Blender executes the code and creates/modifies the 3D objects
-6. The result is visible in the Blender viewport
-
-## Architecture
-
+# for linux
+sudo apt-get install blender
 ```
-┌─────────────┐    ┌──────────────┐    ┌──────────────┐
-│  Streamlit  │    │   MCP-Use    │    │    Blender   │
-│  Interface  │◄──►│  MCP Client  │◄──►│  MCP Server  │
-└─────────────┘    └──────────────┘    └──────────────┘
-       │                                      │
-       │                                      │
-┌─────────────┐                       ┌──────────────┐
-│   Prompt    │                       │   Blender    │
-│  Processing │                       │   Python     │
-└─────────────┘                       └──────────────┘
-```
+- for windows follow the instructions [here](https://www.blender.org/download/windows/)
 
-## Extending the Application
+### Usage
 
-You can extend this application by:
+1. Open Blender and navigate to the 3D view.
 
-1. Adding more object types and templates to `advanced_prompt_handler.py`
-2. Implementing more advanced natural language processing
-3. Adding material and texture controls
-4. Implementing animation capabilities
-5. Connecting to 3D model repositories or generators
+2. Find the Add-on panel:
+- Press `N` to open the side bar
+- Look for `Prompt-to-3D` in the list of add-ons.
+- Enable it by clicking the checkbox.
 
-## Troubleshooting
+3. Use the addon:
+- In the 3D view, you'll see a new panel with a text input field.
+- Enter your prompt, e.g., "Create a red car".
+- Click the button to generate the 3D model.
 
-- If the connection fails, make sure the Blender MCP server is running
-- Check that the port in `blender_mcp.json` matches the port used by the Blender MCP addon
-- Examine the logs in both the Streamlit console and Blender's console
-
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## Acknowledgments
-
-- The Blender Foundation for the amazing Blender software
-- Anthropic and the Claude team for enabling natural language 3D creation
-- The MCP (Machine Control Protocol) project for enabling LLM-to-tool communication
