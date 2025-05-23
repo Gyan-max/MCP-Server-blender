@@ -1,4 +1,4 @@
-# Code created by Siddharth Ahuja: www.github.com/ahujasid © 2025
+
 
 import bpy
 import mathutils
